@@ -1,6 +1,8 @@
 package com.amazon.ata.lists.stringbuilder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A mutable sequence of characters.
@@ -8,40 +10,37 @@ import java.util.List;
 public class ATAStringBuilder {
 
     // tracks the mutable sequence of characters
-    private List<Character> value;
+    private final List<Character> value;
 
     /**
      * COMPLETION 1
-     *
      * Constructs a string builder with no characters in it.
      */
     public ATAStringBuilder() {
-        // PARTICIPANTS - initialize here
+        value = new ArrayList<>();
     }
 
     /**
      * COMPLETION 1
-     *
-     * Constructs a string builder initialized to the contents of the
-     * specified string.
+     * Constructs a string builder initialized to the contents of the specified string.
      *
      * @param initialString the initial contents of the string builder
      */
     public ATAStringBuilder(String initialString) {
         // PARTICIPANTS - initialize here
+        value = new ArrayList<>();
+        this.append(initialString);
     }
 
     /**
      * COMPLETION 2
-     *
      * Returns the length (character count).
      *
      * @return the length of the sequence of characters currently
      * represented by this object
      */
     public int length() {
-        // PARTICIPANTS - implement here
-        return -1;
+        return value.size();
     }
 
     /**
@@ -49,16 +48,20 @@ public class ATAStringBuilder {
      *
      * Appends the specified string.
      * <p>
-     * The characters of the {@code String} argument are appended, in
-     * order, increasing the length of this sequence by the length of the
-     * argument. If {@code str} is {@code null}, then the four
-     * characters {@code "null"} are appended.
+     * The characters of the {@code String} argument are appended, in order, increasing the length of this sequence by the length of the argument.
+     * If {@code str} is {@code null}, then the four characters {@code "null"} are appended.
      *
      * @param str a string, to be appended.
      * @return a reference to this object.
      */
     public ATAStringBuilder append(String str) {
-        // PARTICIPANTS - implement here
+        if (str == null) {
+            this.append("null");
+        } else {
+            for (int i = 0; i < str.length(); i++) {
+                value.add(str.charAt(i));
+            }
+        }
         return this;
     }
 
@@ -67,9 +70,8 @@ public class ATAStringBuilder {
      *
      * Inserts the {@code char} argument into this sequence.
      * <p>
-     * The {@code offset} argument must be greater than or equal to
-     * {@code 0}, and less than or equal to the {@linkplain #length() length}
-     * of this sequence.
+     * The {@code offset} argument must be greater than or equal to {@code 0},
+     * and less than or equal to the {@linkplain #length() length} of this sequence.
      *
      * @param offset the offset.
      * @param c      a {@code char}.
@@ -77,7 +79,10 @@ public class ATAStringBuilder {
      * @throws IndexOutOfBoundsException if the offset is invalid.
      */
     public ATAStringBuilder insert(int offset, char c) {
-        // PARTICIPANTS - implement here
+        if (offset > this.length()) {
+            throw new IndexOutOfBoundsException("Out of Bounds_ - _ -");
+        }
+        value.add(offset, c);
         return this;
     }
 
@@ -97,8 +102,10 @@ public class ATAStringBuilder {
      *                                   negative or greater than or equal to {@code length()}.
      */
     public char charAt(int index) {
-        // PARTICIPANTS - implement here
-        return ' ';
+        if (index >= value.size()) {
+            throw new IndexOutOfBoundsException("Index is out of bounds");
+        }
+        return value.get(index);
     }
 
     /**
@@ -119,15 +126,17 @@ public class ATAStringBuilder {
      *                                   negative or greater than or equal to {@code length()}.
      */
     public ATAStringBuilder setCharAt(int index, char ch) {
-        // PARTICIPANTS - implement here
+        if (index >= value.size()) {
+            throw new IndexOutOfBoundsException("Index is out of bounds");
+        }
+        value.set(index, ch);
         return this;
     }
 
     /**
      * EXTENSION 1
      * <p>
-     * Removes the {@code char} at the specified position in this
-     * sequence. This sequence is shortened by one.
+     * Removes the {@code char} at the specified position in this sequence. This sequence is shortened by one.
      *
      * @param index Index of {@code char} to remove
      * @return This object.
@@ -136,29 +145,39 @@ public class ATAStringBuilder {
      *                                         {@code length()}.
      */
     public ATAStringBuilder deleteCharAt(int index) {
-        // PARTICIPANTS - implement here
+        if (index >= value.size()) {
+            throw new StringIndexOutOfBoundsException("Index is out of bounds");
+        }
+        value.remove(index);
         return this;
     }
 
     /**
      * EXTENSION 2
      * <p>
-     * Returns a new {@code String} that contains a subsequence of
-     * characters currently contained in this sequence. The
-     * substring begins at the specified {@code start} and
-     * extends to the character at index {@code end - 1}.
+     * Returns a new {@code String} that contains a subsequence of characters currently contained in this sequence.
+     * The substring begins at the specified {@code start} and extends to the character at index {@code end - 1}.
      *
      * @param start The beginning index, inclusive.
      * @param end   The ending index, exclusive.
      * @return The new string.
-     * @throws StringIndexOutOfBoundsException if {@code start}
-     *                                         or {@code end} are negative or greater than
-     *                                         {@code length()}, or {@code start} is
-     *                                         greater than {@code end}.
+     * @throws StringIndexOutOfBoundsException if {@code start} or {@code end} are negative or greater than {@code length()},
+     * or {@code start} is greater than {@code end}.
      */
     public String substring(int start, int end) {
-        // PARTICIPANTS - implement here
-        return null;
+        if (start < 0 || end < 0) {
+            throw new IndexOutOfBoundsException("Index is below 0");
+        }
+        if (start > end) {
+            throw new IndexOutOfBoundsException("Start index greater than end index.");
+        }
+
+        List<Character> charList = value.subList(start, end);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c: charList) {
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -185,7 +204,14 @@ public class ATAStringBuilder {
      */
     //CHECKSTYLE:OFF:OverloadMethodsDeclarationOrder
     public ATAStringBuilder insert(int offset, String str) {
-        // PARTICIPANTS - implement here
+        if (offset < 0 || offset > value.size()) {
+            throw new StringIndexOutOfBoundsException("Index is out of bounds");
+        }
+        ArrayList<Character> newList = new ArrayList<>();
+        for (char c: str.toCharArray()) {
+            newList.add(c);
+        }
+        value.addAll(offset, newList);
         return this;
     }
     //CHECKSTYLE:ON:OverloadMethodsDeclarationOrder
@@ -202,7 +228,7 @@ public class ATAStringBuilder {
      */
     //CHECKSTYLE:OFF:OverloadMethodsDeclarationOrder
     public ATAStringBuilder append(Object obj) {
-        // PARTICIPANTS - implement here
+        this.append(Objects.requireNonNullElse(String.valueOf(obj), "null"));
         return this;
     }
     //CHECKSTYLE:ON:OverloadMethodsDeclarationOrder

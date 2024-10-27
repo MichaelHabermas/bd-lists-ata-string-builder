@@ -22,12 +22,12 @@ checkstyle {
     ignoreFailures = true
 }
 
-tasks.withType(Checkstyle) {
-    reports {
-        xml.enabled false
-        html.enabled true
-    }
-}
+//tasks.withType(Checkstyle) {
+//    reports {
+////        xml.enabled false
+//        html.enabled true
+//    }
+//}
 
 check.dependsOn jacocoTestCoverageVerification
 jacocoTestCoverageVerification {
